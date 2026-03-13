@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>趣味测试合集 | 了解真实的自己</title>
+    <style>
+        /* CSS变量 - 设计规范 */
+        :root {
+            --color-primary: #000;
+            --color-text: #111;
+            --color-accent: #4ade80;
+            --color-bg: #000;
+            --color-card: #111;
+            --color-border: #222;
+            --color-white: #fff;
+            --color-gray-light: #666;
+            
+            --font-size-h1: 32px;
+            --font-size-h2: 24px;
+            --font-size-card-title: 15px;
+            --font-size-small: 12px;
+            --font-weight-bold: 600;
+            
+            --max-width-mobile: 420px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --radius-md: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--color-bg);
+            color: var(--color-white);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: var(--spacing-lg);
+        }
+        
+        .container {
+            max-width: var(--max-width-mobile);
+            margin: 0 auto;
+        }
+        
+        /* 头部 */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 32px 0;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .logo {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: bounce 2s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .header h1 {
+            font-size: var(--font-size-h1);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+        }
+        
+        /* 统计卡片 */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+            margin-bottom: 32px;
+            animation: slideUp 0.6s ease 0.2s backwards;
+        }
+        
+        .stat-item {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            color: var(--color-accent);
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+        }
+        
+        /* 测试分类 */
+        .category {
+            margin-bottom: 32px;
+        }
+        
+        .category-title {
+            font-size: var(--font-size-h2);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 16px;
+            color: var(--color-white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideUp 0.6s ease 0.3s backwards;
+        }
+        
+        .category-icon {
+            font-size: 24px;
+        }
+        
+        /* 测试卡片 */
+        .quiz-grid {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+        
+        .quiz-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            animation: slideUp 0.6s ease backwards;
+        }
+        
+        .quiz-card:nth-child(1) { animation-delay: 0.4s; }
+        .quiz-card:nth-child(2) { animation-delay: 0.5s; }
+        .quiz-card:nth-child(3) { animation-delay: 0.6s; }
+        .quiz-card:nth-child(4) { animation-delay: 0.7s; }
+        .quiz-card:nth-child(5) { animation-delay: 0.8s; }
+        .quiz-card:nth-child(6) { animation-delay: 0.9s; }
+        
+        .quiz-card:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .quiz-emoji {
+            font-size: 48px;
+        }
+        
+        .quiz-badge {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--color-accent);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 10px;
+            font-weight: var(--font-weight-bold);
+            text-transform: uppercase;
+        }
+        
+        .quiz-badge.hot {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        
+        .quiz-badge.new {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        
+        .quiz-title {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-white);
+            margin-bottom: 8px;
+        }
+        
+        .quiz-desc {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .quiz-meta {
+            display: flex;
+            gap: 16px;
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+        }
+        
+        .quiz-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .quiz-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        
+        .quiz-tag {
+            background: #1a1a1a;
+            color: var(--color-gray-light);
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 10px;
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            margin-top: 48px;
+            border-top: 1px solid var(--color-border);
+            animation: fadeIn 0.6s ease 0.8s backwards;
+        }
+        
+        .footer-text {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+            margin-bottom: 8px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .footer-link {
+            color: var(--color-gray-light);
+            text-decoration: none;
+            font-size: var(--font-size-small);
+            transition: color 0.2s ease;
+        }
+        
+        .footer-link:hover {
+            color: var(--color-accent);
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 响应式 */
+        @media (max-width: 380px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="logo">🎯</div>
+            <h1>趣味测试合集</h1>
+            <p>探索自我，发现更好的你</p>
+        </div>
+        
+        <!-- 统计 -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value">6</div>
+                <div class="stat-label">测试数量</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">56</div>
+                <div class="stat-label">结果类型</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">64</div>
+                <div class="stat-label">测试题目</div>
+            </div>
+        </div>
+        
+        <!-- 热门测试 -->
+        <div class="category">
+            <div class="category-title">
+                <span class="category-icon">🔥</span>
+                <span>热门测试</span>
+            </div>
+            <div class="quiz-grid">
+                <a href="mbti-quiz.html" class="quiz-card">
+                    <div class="quiz-header">
+                        <div class="quiz-emoji">🧠</div>
+                        <div class="quiz-badge hot">HOT</div>
+                    </div>
+                    <div class="quiz-title">MBTI人格测试</div>
+                    <div class="quiz-desc">12道题测出你的16型人格，了解真实的自己，找到适合的职业方向</div>
+                    <div class="quiz-meta">
+                        <div class="quiz-meta-item">
+                            <span>📝</span>
+                            <span>12题</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>🎭</span>
+                            <span>16种人格</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>⏱️</span>
+                            <span>3分钟</span>
+                        </div>
+                    </div>
+                    <div class="quiz-tags">
+                        <span class="quiz-tag">自我认知</span>
+                        <span class="quiz-tag">职业规划</span>
+                        <span class="quiz-tag">性格分析</span>
+                    </div>
+                </a>
+                
+                <a href="animal-quiz.html" class="quiz-card">
+                    <div class="quiz-header">
+                        <div class="quiz-emoji">🐾</div>
+                        <div class="quiz-badge hot">HOT</div>
+                    </div>
+                    <div class="quiz-title">动物属性测试</div>
+                    <div class="quiz-desc">10道题发现你的本能特质，看看你是狮子、猫头鹰还是海豚</div>
+                    <div class="quiz-meta">
+                        <div class="quiz-meta-item">
+                            <span>📝</span>
+                            <span>10题</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>🦁</span>
+                            <span>10种动物</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>⏱️</span>
+                            <span>2分钟</span>
+                        </div>
+                    </div>
+                    <div class="quiz-tags">
+                        <span class="quiz-tag">性格特质</span>
+                        <span class="quiz-tag">团队定位</span>
+                        <span class="quiz-tag">趣味</span>
+                    </div>
+                </a>
+                
+                <a href="love-style-quiz.html" class="quiz-card">
+                    <div class="quiz-header">
+                        <div class="quiz-emoji">💕</div>
+                        <div class="quiz-badge new">NEW</div>
+                    </div>
+                    <div class="quiz-title">恋爱风格测试</div>
+                    <div class="quiz-desc">12道题找到你的爱情类型，分析你的恋爱模式和适合的伴侣</div>
+                    <div class="quiz-meta">
+                        <div class="quiz-meta-item">
+                            <span>📝</span>
+                            <span>12题</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>💑</span>
+                            <span>8种类型</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>⏱️</span>
+                            <span>3分钟</span>
+                        </div>
+                    </div>
+                    <div class="quiz-tags">
+                        <span class="quiz-tag">恋爱</span>
+                        <span class="quiz-tag">情感分析</span>
+                        <span class="quiz-tag">关系</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 更多测试 -->
+        <div class="category">
+            <div class="category-title">
+                <span class="category-icon">✨</span>
+                <span>更多测试</span>
+            </div>
+            <div class="quiz-grid">
+                <a href="city-quiz.html" class="quiz-card">
+                    <div class="quiz-header">
+                        <div class="quiz-emoji">🏙️</div>
+                        <div class="quiz-badge">推荐</div>
+                    </div>
+                    <div class="quiz-title">理想生活城市</div>
+                    <div class="quiz-desc">10道题找到最适合你的城市，分析你的生活偏好和城市特质</div>
+                    <div class="quiz-meta">
+                        <div class="quiz-meta-item">
+                            <span>📝</span>
+                            <span>10题</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>🌆</span>
+                            <span>8个城市</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>⏱️</span>
+                            <span>2分钟</span>
+                        </div>
+                    </div>
+                    <div class="quiz-tags">
+                        <span class="quiz-tag">城市选择</span>
+                        <span class="quiz-tag">生活方式</span>
+                        <span class="quiz-tag">定居参考</span>
+                    </div>
+                </a>
+                
+                <a href="learning-style-quiz.html" class="quiz-card">
+                    <div class="quiz-header">
+                        <div class="quiz-emoji">📚</div>
+                        <div class="quiz-badge">实用</div>
+                    </div>
+                    <div class="quiz-title">学习风格测试</div>
+                    <div class="quiz-desc">10道题找到最适合你的学习方式，提升学习效率和成绩</div>
+                    <div class="quiz-meta">
+                        <div class="quiz-meta-item">
+                            <span>📝</span>
+                            <span>10题</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>🎓</span>
+                            <span>6种风格</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>⏱️</span>
+                            <span>2分钟</span>
+                        </div>
+                    </div>
+                    <div class="quiz-tags">
+                        <span class="quiz-tag">学习方法</span>
+                        <span class="quiz-tag">认知模式</span>
+                        <span class="quiz-tag">效率提升</span>
+                    </div>
+                </a>
+                
+                <a href="aesthetic-style-quiz.html" class="quiz-card">
+                    <div class="quiz-header">
+                        <div class="quiz-emoji">🎨</div>
+                        <div class="quiz-badge">艺术</div>
+                    </div>
+                    <div class="quiz-title">审美风格测试</div>
+                    <div class="quiz-desc">10道题发现你的艺术品味，找到属于你的美学风格</div>
+                    <div class="quiz-meta">
+                        <div class="quiz-meta-item">
+                            <span>📝</span>
+                            <span>10题</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>🖼️</span>
+                            <span>8种风格</span>
+                        </div>
+                        <div class="quiz-meta-item">
+                            <span>⏱️</span>
+                            <span>2分钟</span>
+                        </div>
+                    </div>
+                    <div class="quiz-tags">
+                        <span class="quiz-tag">审美</span>
+                        <span class="quiz-tag">艺术品味</span>
+                        <span class="quiz-tag">风格定位</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <div class="footer-text">所有测试结果仅供娱乐参考</div>
+            <div class="footer-text">共6个测试 · 56种结果 · 64道题目</div>
+            <div class="footer-text">Powered by OpenClaw.ai</div>
+            <div class="footer-links">
+                <a href="https://github.com" class="footer-link">GitHub</a>
+                <a href="mailto:contact@example.com" class="footer-link">联系我们</a>
+                <a href="#" class="footer-link">关于</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 添加平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

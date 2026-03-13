@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你的恋爱风格 | 趣味测试</title>
+    <style>
+        :root {
+            --color-primary: #000;
+            --color-text: #111;
+            --color-accent: #4ade80;
+            --color-bg: #000;
+            --color-card: #111;
+            --color-border: #222;
+            --color-white: #fff;
+            --color-gray-light: #666;
+            
+            --font-size-h2: 24px;
+            --font-size-card-title: 15px;
+            --font-size-small: 12px;
+            --font-weight-bold: 600;
+            
+            --max-width-mobile: 420px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --radius-md: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--color-bg);
+            color: var(--color-white);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: var(--spacing-lg);
+        }
+        
+        .container {
+            max-width: var(--max-width-mobile);
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: slideUp 0.6s ease;
+        }
+        
+        .header h1 {
+            font-size: var(--font-size-h2);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+        }
+        
+        .header p {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+        }
+        
+        .progress-bar {
+            background: var(--color-card);
+            height: 4px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            animation: slideUp 0.6s ease 0.1s backwards;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--color-accent);
+            transition: width 0.3s ease;
+        }
+        
+        .question-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            animation: slideUp 0.6s ease 0.2s backwards;
+        }
+        
+        .question-number {
+            color: var(--color-accent);
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+        }
+        
+        .question-text {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-white);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .option {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        
+        .option:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            border-color: var(--color-accent);
+            background: rgba(74, 222, 128, 0.1);
+        }
+        
+        .option-label {
+            font-size: var(--font-size-card-title);
+            font-weight: 500;
+            color: var(--color-white);
+        }
+        
+        .button {
+            width: 100%;
+            background: var(--color-white);
+            color: var(--color-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 14px 24px;
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .button:hover {
+            background: #f5f5f5;
+            transform: translateY(-1px);
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            display: none;
+        }
+        
+        .result.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .result-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+        
+        .result-emoji {
+            font-size: 80px;
+            margin-bottom: 16px;
+            animation: heartbeat 1.5s ease infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+        }
+        
+        .result-type {
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-accent);
+        }
+        
+        .result-subtitle {
+            font-size: var(--font-size-card-title);
+            color: var(--color-white);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .result-desc {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--color-white);
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        
+        .tag {
+            background: #1a1a1a;
+            color: var(--color-accent);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+        }
+        
+        .traits {
+            display: grid;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .trait-item {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+        
+        .trait-title {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .trait-value {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+            line-height: 1.6;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .share-button {
+            flex: 1;
+            background: var(--color-card);
+            color: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .share-button:hover {
+            background: #1a1a1a;
+            border-color: #333;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quiz" class="quiz">
+            <div class="header">
+                <h1>测测你的恋爱风格</h1>
+                <p>12道题找到你的爱情类型</p>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div id="questionContainer"></div>
+            
+            <button class="button" id="nextBtn" onclick="nextQuestion()" disabled>
+                下一题
+            </button>
+        </div>
+        
+        <div id="result" class="result">
+            <div class="header">
+                <h1>你的恋爱风格</h1>
+                <p>基于情感模式分析</p>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-emoji" id="resultEmoji"></div>
+                <div class="result-type" id="resultType"></div>
+                <div class="result-subtitle" id="resultSubtitle"></div>
+                <div class="result-desc" id="resultDesc"></div>
+                <div class="result-tags" id="resultTags"></div>
+            </div>
+            
+            <div class="traits" id="traits"></div>
+            
+            <div class="share-buttons">
+                <button class="share-button" onclick="shareResult()">
+                    📤 分享结果
+                </button>
+                <button class="share-button" onclick="restart()">
+                    🔄 重新测试
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            {
+                question: "理想的约会是？",
+                options: [
+                    { text: "浪漫晚餐，烛光美酒", type: "romantic", score: 3 },
+                    { text: "户外探险，一起挑战", type: "adventurous", score: 3 },
+                    { text: "在家看剧，简单舒适", type: "companion", score: 3 },
+                    { text: "深夜长谈，心灵交流", type: "emotional", score: 3 }
+                ]
+            },
+            {
+                question: "在恋爱中，你最看重？",
+                options: [
+                    { text: "激情和浪漫", type: "romantic", score: 3 },
+                    { text: "新鲜感和刺激", type: "adventurous", score: 3 },
+                    { text: "陪伴和理解", type: "companion", score: 3 },
+                    { text: "精神共鸣", type: "emotional", score: 3 }
+                ]
+            },
+            {
+                question: "吵架后，你会？",
+                options: [
+                    { text: "主动道歉，送礼物哄", type: "romantic", score: 2 },
+                    { text: "冷静期后坦诚沟通", type: "rational", score: 2 },
+                    { text: "先冷战，等对方先来", type: "independent", score: 2 },
+                    { text: "立刻解决，不能带情绪", type: "companion", score: 2 }
+                ]
+            },
+            {
+                question: "对方让你失望时？",
+                options: [
+                    { text: "直接表达不满", type: "rational", score: 3 },
+                    { text: "闷在心里，慢慢消化", type: "emotional", score: 3 },
+                    { text: "考虑是否继续", type: "independent", score: 3 },
+                    { text: "试着理解和包容", type: "companion", score: 3 }
+                ]
+            },
+            {
+                question: "你更倾向于？",
+                options: [
+                    { text: "轰轰烈烈的爱情", type: "passionate", score: 3 },
+                    { text: "细水长流的陪伴", type: "companion", score: 3 },
+                    { text: "保持独立的空间", type: "independent", score: 3 },
+                    { text: "灵魂深处的契合", type: "emotional", score: 3 }
+                ]
+            },
+            {
+                question: "恋爱中的你是？",
+                options: [
+                    { text: "主动追求，热情如火", type: "passionate", score: 2 },
+                    { text: "慢热型，需要时间", type: "rational", score: 2 },
+                    { text: "随缘，不强求", type: "independent", score: 2 },
+                    { text: "感性，容易投入", type: "emotional", score: 2 }
+                ]
+            },
+            {
+                question: "表达爱意的方式？",
+                options: [
+                    { text: "浪漫惊喜和仪式感", type: "romantic", score: 3 },
+                    { text: "实际行动和付出", type: "companion", score: 3 },
+                    { text: "语言表达和沟通", type: "emotional", score: 3 },
+                    { text: "尊重空间和自由", type: "independent", score: 3 }
+                ]
+            },
+            {
+                question: "对方粘人时？",
+                options: [
+                    { text: "享受被需要的感觉", type: "romantic", score: 2 },
+                    { text: "觉得温暖和幸福", type: "companion", score: 2 },
+                    { text: "有点窒息，需要空间", type: "independent", score: 2 },
+                    { text: "理解但也需要边界", type: "rational", score: 2 }
+                ]
+            },
+            {
+                question: "你对爱情的期待是？",
+                options: [
+                    { text: "永远保持激情", type: "passionate", score: 3 },
+                    { text: "平淡中的幸福", type: "companion", score: 3 },
+                    { text: "相互成就和成长", type: "rational", score: 3 },
+                    { text: "心灵的完全契合", type: "emotional", score: 3 }
+                ]
+            },
+            {
+                question: "分手后，你会？",
+                options: [
+                    { text: "痛苦但能快速走出", type: "rational", score: 2 },
+                    { text: "长时间无法释怀", type: "emotional", score: 2 },
+                    { text: "理性分析，向前看", type: "independent", score: 2 },
+                    { text: "保持联系，转为朋友", type: "companion", score: 2 }
+                ]
+            },
+            {
+                question: "你害怕在爱情中？",
+                options: [
+                    { text: "失去激情变成亲情", type: "passionate", score: 2 },
+                    { text: "失去自我和独立", type: "independent", score: 2 },
+                    { text: "被误解和不理解", type: "emotional", score: 2 },
+                    { text: "对方离开自己", type: "companion", score: 2 }
+                ]
+            },
+            {
+                question: "理想的爱人是？",
+                options: [
+                    { text: "浪漫体贴，会制造惊喜", type: "romantic", score: 3 },
+                    { text: "有趣好玩，永远新鲜", type: "adventurous", score: 3 },
+                    { text: "稳定可靠，给予安全感", type: "companion", score: 3 },
+                    { text: "懂我理解我，心有灵犀", type: "emotional", score: 3 }
+                ]
+            }
+        ];
+        
+        const loveResults = {
+            romantic: {
+                emoji: "🌹",
+                name: "浪漫主义型",
+                subtitle: "爱情至上的梦想家",
+                desc: "你是天生的浪漫主义者，相信童话般的爱情。你重视仪式感，喜欢制造惊喜和浪漫时刻。在你心中，爱情应该是美好、纯粹、充满激情的。你会为爱付出一切，也期待对方同样浪漫。虽然有时显得理想化，但你的真心和浪漫让爱情充满魔力。",
+                tags: ["浪漫", "仪式感", "真心", "理想化", "深情"],
+                traits: [
+                    { icon: "💕", title: "恋爱特点", value: "重视仪式感、喜欢惊喜、表达直接、投入度高、感情真挚" },
+                    { icon: "💑", title: "适合对象", value: "同样浪漫、懂得表达、重视情感、有耐心、愿意配合" },
+                    { icon: "⚠️", title: "注意事项", value: "避免过度理想化、接受平淡日常、理性看待矛盾、给对方空间" }
+                ]
+            },
+            passionate: {
+                emoji: "🔥",
+                name: "激情冲动型",
+                subtitle: "热烈如火的追爱者",
+                desc: "你是充满激情的恋爱高手，追求轰轰烈烈的爱情。你勇敢、主动、热情似火，不喜欢拖泥带水。在爱情中你全力以赴，享受那种心跳加速的感觉。你害怕平淡，永远追求新鲜感和刺激。虽然有时冲动，但你的热情让爱情充满活力。",
+                tags: ["激情", "主动", "热烈", "勇敢", "直接"],
+                traits: [
+                    { icon: "💕", title: "恋爱特点", value: "追求激情、行动力强、表达直接、不怕拒绝、热情如火" },
+                    { icon: "💑", title: "适合对象", value: "能跟上节奏、同样热情、接受强度、有新鲜感、独立性强" },
+                    { icon: "⚠️", title: "注意事项", value: "避免过度冲动、珍惜平淡时刻、学会冷静、尊重对方节奏" }
+                ]
+            },
+            companion: {
+                emoji: "🤝",
+                name: "陪伴依赖型",
+                subtitle: "温暖可靠的守护者",
+                desc: "你是细水长流的陪伴型恋人，追求稳定和安全感。你重视日常的陪伴和相处，珍惜平淡中的幸福。在爱情中你温柔、体贴、可靠，是最好的倾听者。你不追求轰轰烈烈，更享受两个人在一起的每一天。你的稳定和温暖让爱情长久而踏实。",
+                tags: ["陪伴", "稳定", "温暖", "可靠", "体贴"],
+                traits: [
+                    { icon: "💕", title: "恋爱特点", value: "重视陪伴、追求稳定、体贴入微、依赖性强、忠诚度高" },
+                    { icon: "💑", title: "适合对象", value: "稳定可靠、有耐心、愿意陪伴、给予安全感、认真负责" },
+                    { icon: "⚠️", title: "注意事项", value: "避免过度依赖、保持独立性、给彼此空间、接受分离时刻" }
+                ]
+            },
+            emotional: {
+                emoji: "💖",
+                name: "情感深度型",
+                subtitle: "追求灵魂契合的理想者",
+                desc: "你是追求精神契合的深度恋人，重视心灵层面的连接。你敏感、细腻、善解人意，能深刻理解对方的情感。在爱情中你追求灵魂伴侣，渴望被完全理解和接纳。你的爱细腻而深沉，虽然不常表达但刻骨铭心。你的深情和理解让爱情充满深度。",
+                tags: ["深情", "敏感", "理解", "契合", "细腻"],
+                traits: [
+                    { icon: "💕", title: "恋爱特点", value: "追求精神契合、情感细腻、善解人意、深度交流、忠诚专一" },
+                    { icon: "💑", title: "适合对象", value: "懂得倾听、情感丰富、有深度、能理解、愿意交流" },
+                    { icon: "⚠️", title: "注意事项", value: "避免过度敏感、学会表达、不要期待过高、接受不完美" }
+                ]
+            },
+            rational: {
+                emoji: "🧠",
+                name: "理性克制型",
+                subtitle: "冷静务实的现实者",
+                desc: "你是理性的恋爱者，用脑多过用心。你重视匹配度和实际条件，不会被感情冲昏头脑。在爱情中你冷静、克制、有分寸，懂得权衡利弊。你不追求轰轰烈烈，更看重长期的稳定和成长。虽然看似冷淡，但你的理性让爱情更加务实和长久。",
+                tags: ["理性", "克制", "务实", "冷静", "成熟"],
+                traits: [
+                    { icon: "💕", title: "恋爱特点", value: "理性分析、克制冷静、看重条件、慢热型、注重成长" },
+                    { icon: "💑", title: "适合对象", value: "同样理性、成熟稳重、有共同目标、能沟通、理解尊重" },
+                    { icon: "⚠️", title: "注意事项", value: "学会表达感情、适当感性、制造浪漫、不要过度分析" }
+                ]
+            },
+            independent: {
+                emoji: "🦅",
+                name: "独立自主型",
+                subtitle: "自由不羁的个体者",
+                desc: "你是追求独立和自由的恋爱者，不愿被爱情束缚。你有强烈的自我意识，需要个人空间和时间。在爱情中你保持独立，不过度依赖，也不希望对方依赖自己。你相信好的爱情是两个完整的人的结合。虽然看似冷漠，但你的独立让爱情更加健康和尊重。",
+                tags: ["独立", "自由", "界限", "尊重", "理性"],
+                traits: [
+                    { icon: "💕", title: "恋爱特点", value: "保持独立、需要空间、界限清晰、不粘人、尊重差异" },
+                    { icon: "💑", title: "适合对象", value: "同样独立、有自己生活、理解尊重、不粘人、成熟理性" },
+                    { icon: "⚠️", title: "注意事项", value: "适当表达需要、学会依赖、增加陪伴、平衡独立与亲密" }
+                ]
+            },
+            adventurous: {
+                emoji: "🎢",
+                name: "冒险探索型",
+                subtitle: "追求刺激的探险家",
+                desc: "你是喜欢冒险和新鲜感的恋爱者，追求不一样的体验。你充满好奇心，喜欢和对方一起探索未知。在爱情中你活力四射，总能带来惊喜和欢乐。你害怕无聊和平淡，永远在寻找新的可能。虽然有时不够稳定，但你的活力让爱情充满乐趣。",
+                tags: ["冒险", "新鲜", "活力", "好奇", "有趣"],
+                traits: [
+                    { icon: "💕", title: "恋爱特点", value: "追求新鲜感、喜欢冒险、充满活力、创意无限、勇于尝试" },
+                    { icon: "💑", title: "适合对象", value: "同样爱玩、开放包容、有趣好玩、跟上节奏、接受变化" },
+                    { icon: "⚠️", title: "注意事项", value: "珍惜平淡时刻、提高稳定性、学会承诺、不要三分钟热度" }
+                ]
+            },
+            secure: {
+                emoji: "🏠",
+                name: "安全稳定型",
+                subtitle: "踏实可靠的建设者",
+                desc: "你是追求安全感和稳定的恋爱者，重视承诺和未来规划。你踏实、认真、负责任，把爱情当作人生大事。在爱情中你可靠、忠诚、为对方着想，是最值得托付终身的人。你不追求激情，更看重长久和稳定。你的踏实让爱情充满安全感和归属感。",
+                tags: ["安全", "稳定", "踏实", "忠诚", "负责"],
+                traits: [
+                    { icon: "💕", title: "恋爱特点", value: "追求稳定、认真负责、忠诚专一、重视承诺、规划未来" },
+                    { icon: "💑", title: "适合对象", value: "同样稳定、有规划、认真对待、可靠负责、长期主义" },
+                    { icon: "⚠️", title: "注意事项", value: "增加浪漫和惊喜、不要过于保守、接受变化、适当冒险" }
+                ]
+            }
+        };
+        
+        let currentQuestion = 0;
+        let typeScores = {
+            romantic: 0, passionate: 0, companion: 0, emotional: 0,
+            rational: 0, independent: 0, adventurous: 0, secure: 0
+        };
+        
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">问题 ${currentQuestion + 1}/12</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <div class="option-label">${option.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('nextBtn').disabled = true;
+        }
+        
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.option')[index].classList.add('selected');
+            
+            const option = questions[currentQuestion].options[index];
+            typeScores[option.type] += option.score;
+            
+            document.getElementById('nextBtn').disabled = false;
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        function calculateType() {
+            let maxScore = 0;
+            let resultType = 'romantic';
+            
+            for (let type in typeScores) {
+                if (typeScores[type] > maxScore) {
+                    maxScore = typeScores[type];
+                    resultType = type;
+                }
+            }
+            
+            return resultType;
+        }
+        
+        function showResult() {
+            const type = calculateType();
+            const result = loveResults[type];
+            
+            document.getElementById('quiz').classList.add('hidden');
+            document.getElementById('result').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            document.getElementById('resultType').textContent = result.name;
+            document.getElementById('resultSubtitle').textContent = result.subtitle;
+            document.getElementById('resultDesc').textContent = result.desc;
+            
+            const tagsHtml = result.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            document.getElementById('resultTags').innerHTML = tagsHtml;
+            
+            const traitsHtml = result.traits.map(trait => `
+                <div class="trait-item">
+                    <div class="trait-title">
+                        <span>${trait.icon}</span>
+                        <span>${trait.title}</span>
+                    </div>
+                    <div class="trait-value">${trait.value}</div>
+                </div>
+            `).join('');
+            document.getElementById('traits').innerHTML = traitsHtml;
+        }
+        
+        function shareResult() {
+            const type = calculateType();
+            const result = loveResults[type];
+            const text = `我的恋爱风格是${result.name}！${result.subtitle}，你也来测测看吧~`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '恋爱风格测试',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                alert('分享内容：' + text);
+            }
+        }
+        
+        function restart() {
+            currentQuestion = 0;
+            typeScores = {
+                romantic: 0, passionate: 0, companion: 0, emotional: 0,
+                rational: 0, independent: 0, adventurous: 0, secure: 0
+            };
+            document.getElementById('quiz').classList.remove('hidden');
+            document.getElementById('result').classList.remove('active');
+            renderQuestion();
+        }
+        
+        renderQuestion();
+    </script>
+</body>
+</html>

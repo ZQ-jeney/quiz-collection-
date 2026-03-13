@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你的动物属性 | 趣味测试</title>
+    <style>
+        :root {
+            --color-primary: #000;
+            --color-text: #111;
+            --color-accent: #4ade80;
+            --color-bg: #000;
+            --color-card: #111;
+            --color-border: #222;
+            --color-white: #fff;
+            --color-gray-light: #666;
+            
+            --font-size-h2: 24px;
+            --font-size-card-title: 15px;
+            --font-size-small: 12px;
+            --font-weight-bold: 600;
+            
+            --max-width-mobile: 420px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --radius-md: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--color-bg);
+            color: var(--color-white);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: var(--spacing-lg);
+        }
+        
+        .container {
+            max-width: var(--max-width-mobile);
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: slideUp 0.6s ease;
+        }
+        
+        .header h1 {
+            font-size: var(--font-size-h2);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+        }
+        
+        .header p {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+        }
+        
+        .progress-bar {
+            background: var(--color-card);
+            height: 4px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            animation: slideUp 0.6s ease 0.1s backwards;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--color-accent);
+            transition: width 0.3s ease;
+        }
+        
+        .question-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            animation: slideUp 0.6s ease 0.2s backwards;
+        }
+        
+        .question-number {
+            color: var(--color-accent);
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+        }
+        
+        .question-text {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-white);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .option {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        
+        .option:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            border-color: var(--color-accent);
+            background: rgba(74, 222, 128, 0.1);
+        }
+        
+        .option-label {
+            font-size: var(--font-size-card-title);
+            font-weight: 500;
+            color: var(--color-white);
+        }
+        
+        .button {
+            width: 100%;
+            background: var(--color-white);
+            color: var(--color-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 14px 24px;
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .button:hover {
+            background: #f5f5f5;
+            transform: translateY(-1px);
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            display: none;
+        }
+        
+        .result.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .result-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+        
+        .result-emoji {
+            font-size: 80px;
+            margin-bottom: 16px;
+            animation: bounce 1s ease;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .result-type {
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-accent);
+        }
+        
+        .result-subtitle {
+            font-size: var(--font-size-card-title);
+            color: var(--color-white);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .result-desc {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--color-white);
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        
+        .tag {
+            background: #1a1a1a;
+            color: var(--color-accent);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+        }
+        
+        .traits {
+            display: grid;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .trait-item {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+        
+        .trait-title {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .trait-value {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+            line-height: 1.6;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .share-button {
+            flex: 1;
+            background: var(--color-card);
+            color: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .share-button:hover {
+            background: #1a1a1a;
+            border-color: #333;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quiz" class="quiz">
+            <div class="header">
+                <h1>测测你的动物属性</h1>
+                <p>10道题发现你的本能特质</p>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div id="questionContainer"></div>
+            
+            <button class="button" id="nextBtn" onclick="nextQuestion()" disabled>
+                下一题
+            </button>
+        </div>
+        
+        <div id="result" class="result">
+            <div class="header">
+                <h1>你的动物属性</h1>
+                <p>基于性格特质分析</p>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-emoji" id="resultEmoji"></div>
+                <div class="result-type" id="resultType"></div>
+                <div class="result-subtitle" id="resultSubtitle"></div>
+                <div class="result-desc" id="resultDesc"></div>
+                <div class="result-tags" id="resultTags"></div>
+            </div>
+            
+            <div class="traits" id="traits"></div>
+            
+            <div class="share-buttons">
+                <button class="share-button" onclick="shareResult()">
+                    📤 分享结果
+                </button>
+                <button class="share-button" onclick="restart()">
+                    🔄 重新测试
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            {
+                question: "在团队中，你通常是？",
+                options: [
+                    { text: "领导者，喜欢指挥全局", animal: "lion", score: 3 },
+                    { text: "协调者，帮助大家合作", animal: "dolphin", score: 3 },
+                    { text: "执行者，默默完成任务", animal: "bee", score: 3 },
+                    { text: "观察者，独立思考", animal: "owl", score: 3 }
+                ]
+            },
+            {
+                question: "面对压力时，你会？",
+                options: [
+                    { text: "直接面对，勇往直前", animal: "lion", score: 2 },
+                    { text: "冷静分析，寻找对策", animal: "owl", score: 2 },
+                    { text: "寻求帮助，团队解决", animal: "dolphin", score: 2 },
+                    { text: "灵活应变，找到出路", animal: "fox", score: 2 }
+                ]
+            },
+            {
+                question: "你的生活节奏是？",
+                options: [
+                    { text: "快节奏，效率至上", animal: "cheetah", score: 3 },
+                    { text: "慢节奏，享受过程", animal: "panda", score: 3 },
+                    { text: "有规律，按部就班", animal: "bee", score: 3 },
+                    { text: "灵活多变，随心而动", animal: "butterfly", score: 3 }
+                ]
+            },
+            {
+                question: "你更喜欢？",
+                options: [
+                    { text: "独处，享受自己的空间", animal: "cat", score: 2 },
+                    { text: "社交，和朋友在一起", animal: "dolphin", score: 2 },
+                    { text: "小群体，几个好友", animal: "wolf", score: 2 },
+                    { text: "看情况，都可以", animal: "fox", score: 2 }
+                ]
+            },
+            {
+                question: "遇到困难时，你的第一反应是？",
+                options: [
+                    { text: "勇敢面对，绝不退缩", animal: "lion", score: 3 },
+                    { text: "仔细思考，找到最优解", animal: "owl", score: 3 },
+                    { text: "寻求他人的帮助和建议", animal: "dolphin", score: 3 },
+                    { text: "绕过障碍，找另一条路", animal: "fox", score: 3 }
+                ]
+            },
+            {
+                question: "你的决策风格是？",
+                options: [
+                    { text: "果断快速，立即行动", animal: "cheetah", score: 2 },
+                    { text: "深思熟虑，三思后行", animal: "owl", score: 2 },
+                    { text: "征求意见，集体决定", animal: "bee", score: 2 },
+                    { text: "凭感觉走，相信直觉", animal: "butterfly", score: 2 }
+                ]
+            },
+            {
+                question: "别人眼中的你是？",
+                options: [
+                    { text: "强大、有威慑力", animal: "lion", score: 2 },
+                    { text: "聪明、有智慧", animal: "owl", score: 2 },
+                    { text: "友善、好相处", animal: "dolphin", score: 2 },
+                    { text: "神秘、难以捉摸", animal: "cat", score: 2 }
+                ]
+            },
+            {
+                question: "你的工作风格是？",
+                options: [
+                    { text: "目标导向，追求成果", animal: "lion", score: 3 },
+                    { text: "精益求精，注重细节", animal: "bee", score: 3 },
+                    { text: "团队合作，共同进步", animal: "wolf", score: 3 },
+                    { text: "创新思维，打破常规", animal: "butterfly", score: 3 }
+                ]
+            },
+            {
+                question: "你的能量来源是？",
+                options: [
+                    { text: "挑战和竞争", animal: "lion", score: 2 },
+                    { text: "学习和成长", animal: "owl", score: 2 },
+                    { text: "人际关系和认可", animal: "dolphin", score: 2 },
+                    { text: "自由和探索", animal: "butterfly", score: 2 }
+                ]
+            },
+            {
+                question: "如果可以选择，你想生活在？",
+                options: [
+                    { text: "草原，自由奔跑", animal: "cheetah", score: 3 },
+                    { text: "森林，静谧思考", animal: "owl", score: 3 },
+                    { text: "海洋，自在畅游", animal: "dolphin", score: 3 },
+                    { text: "花园，悠闲漫步", animal: "butterfly", score: 3 }
+                ]
+            }
+        ];
+        
+        const animalResults = {
+            lion: {
+                emoji: "🦁",
+                name: "狮子型",
+                subtitle: "天生的领导者",
+                desc: "你是团队中的王者，拥有强大的领导力和决断力。自信、勇敢、目标明确，喜欢掌控全局。你的威严和魄力让人信服，但有时需要学会倾听他人的声音。你是天生的领袖，能激励团队走向成功。",
+                tags: ["领导力", "果断", "自信", "强大", "目标导向"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "领导能力强、决策果断、目标明确、勇于承担责任" },
+                    { icon: "🎯", title: "适合场景", value: "管理岗位、创业、竞争环境、需要决断的工作" },
+                    { icon: "⚠️", title: "成长建议", value: "学会倾听、注意他人感受、避免过于强势、培养耐心" }
+                ]
+            },
+            owl: {
+                emoji: "🦉",
+                name: "猫头鹰型",
+                subtitle: "智慧的思考者",
+                desc: "你是理性的思考者，拥有深刻的洞察力和分析能力。喜欢独处思考，追求知识和真理。你冷静、客观、逻辑清晰，善于发现问题的本质。虽然不善社交，但你的智慧和远见让人钦佩。",
+                tags: ["智慧", "理性", "深思", "洞察", "独立"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "分析能力强、逻辑清晰、深度思考、独立解决问题" },
+                    { icon: "🎯", title: "适合场景", value: "研究工作、数据分析、战略规划、需要深度思考的领域" },
+                    { icon: "⚠️", title: "成长建议", value: "加强人际交往、提高执行力、平衡理性与感性、接地气" }
+                ]
+            },
+            dolphin: {
+                emoji: "🐬",
+                name: "海豚型",
+                subtitle: "友善的协调者",
+                desc: "你是团队中的润滑剂，拥有出色的同理心和沟通能力。友善、热情、善于倾听，总能理解他人的感受。你重视和谐，喜欢帮助他人，是最受欢迎的类型。你的温暖和善良能治愈身边的人。",
+                tags: ["友善", "同理心", "沟通", "和谐", "受欢迎"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "沟通能力强、善解人意、团队协作、化解矛盾、人缘好" },
+                    { icon: "🎯", title: "适合场景", value: "人力资源、客服、教育、心理咨询、需要沟通的工作" },
+                    { icon: "⚠️", title: "成长建议", value: "学会拒绝、设定边界、关注自己需求、提高决断力" }
+                ]
+            },
+            fox: {
+                emoji: "🦊",
+                name: "狐狸型",
+                subtitle: "机智的策略家",
+                desc: "你是灵活的策略家，拥有出色的应变能力和智慧。机智、敏锐、善于观察，总能找到最优解。你既能独立工作也能团队合作，适应力极强。你的灵活性和策略思维让你在任何环境都能游刃有余。",
+                tags: ["机智", "灵活", "策略", "敏锐", "适应力强"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "应变能力强、策略思维、观察敏锐、灵活多变、善于权衡" },
+                    { icon: "🎯", title: "适合场景", value: "市场营销、商务谈判、咨询顾问、需要策略的领域" },
+                    { icon: "⚠️", title: "成长建议", value: "建立信任、坚持原则、避免过度算计、真诚待人" }
+                ]
+            },
+            bee: {
+                emoji: "🐝",
+                name: "蜜蜂型",
+                subtitle: "勤勉的实干家",
+                desc: "你是团队中的实干家，拥有强大的执行力和责任感。勤奋、细致、有条理，总能把事情做到完美。你重视规则和秩序，是最可靠的伙伴。虽然不爱出风头，但你的努力和付出是团队成功的基石。",
+                tags: ["勤奋", "细致", "执行力", "可靠", "有序"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "执行力强、细致认真、有条理、责任感强、持之以恒" },
+                    { icon: "🎯", title: "适合场景", value: "项目执行、质量管理、行政工作、需要细致的领域" },
+                    { icon: "⚠️", title: "成长建议", value: "学会灵活变通、避免过度完美主义、关注大局、适时休息" }
+                ]
+            },
+            wolf: {
+                emoji: "🐺",
+                name: "狼型",
+                subtitle: "忠诚的团队者",
+                desc: "你是天生的团队合作者，拥有强烈的团队意识和忠诚度。你重视集体利益，善于协作，能在团队中发挥重要作用。既有独立性又懂合作，在团队和个人之间找到完美平衡。你的忠诚和协作精神是团队的宝贵财富。",
+                tags: ["团队", "忠诚", "协作", "坚韧", "可靠"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "团队协作、忠诚可靠、坚韧不拔、互助互利、集体荣誉感" },
+                    { icon: "🎯", title: "适合场景", value: "团队项目、运动竞技、军警、需要协作的领域" },
+                    { icon: "⚠️", title: "成长建议", value: "培养独立性、平衡个人与集体、学会说不、发展个人特色" }
+                ]
+            },
+            cheetah: {
+                emoji: "🐆",
+                name: "猎豹型",
+                subtitle: "快速的行动者",
+                desc: "你是极具行动力的执行者，拥有惊人的速度和效率。果断、敏捷、追求效率，能快速抓住机会。你不喜欢拖延，总是以最快的速度达成目标。你的执行力和速度让人惊叹，但有时需要更多耐心和深度思考。",
+                tags: ["快速", "高效", "果断", "敏捷", "行动力"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "执行力超强、反应敏捷、高效率、抓住机会、快速决策" },
+                    { icon: "🎯", title: "适合场景", value: "销售、创业、快节奏工作、需要快速反应的领域" },
+                    { icon: "⚠️", title: "成长建议", value: "培养耐心、深度思考、避免冲动、注重质量而非速度" }
+                ]
+            },
+            cat: {
+                emoji: "🐱",
+                name: "猫型",
+                subtitle: "独立的自由者",
+                desc: "你是独立自主的个体，拥有强烈的自我意识和独特性。神秘、优雅、不随波逐流，按自己的节奏生活。你享受独处，不依赖他人，有自己的世界。虽然看似冷漠，但对在意的人会付出真心。你的独立和神秘让你充满魅力。",
+                tags: ["独立", "神秘", "优雅", "自由", "独特"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "独立自主、思维独特、不随波逐流、神秘魅力、自我意识强" },
+                    { icon: "🎯", title: "适合场景", value: "创意工作、自由职业、艺术领域、需要独立思考的工作" },
+                    { icon: "⚠️", title: "成长建议", value: "加强团队合作、学会依赖他人、表达情感、建立深度关系" }
+                ]
+            },
+            butterfly: {
+                emoji: "🦋",
+                name: "蝴蝶型",
+                subtitle: "自由的探索者",
+                desc: "你是追求自由和美好的探索者，拥有丰富的想象力和创造力。灵动、多变、充满好奇心，总是追寻新鲜事物。你热爱生活，享受当下，能发现生活中的美好。虽然有时显得不够稳定，但你的活力和创意让世界更精彩。",
+                tags: ["自由", "创意", "灵动", "好奇", "美好"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "创造力强、充满活力、好奇心、发现美好、适应变化" },
+                    { icon: "🎯", title: "适合场景", value: "创意产业、艺术设计、旅游、需要创新的领域" },
+                    { icon: "⚠️", title: "成长建议", value: "提高专注力、培养耐心、坚持长期目标、增强稳定性" }
+                ]
+            },
+            panda: {
+                emoji: "🐼",
+                name: "熊猫型",
+                subtitle: "悠闲的享受者",
+                desc: "你是慢节奏的享受派，拥有平和的心态和淡定的性格。不急不躁，享受生活，懂得放松。你不喜欢竞争和压力，更倾向于舒适和稳定。虽然看似懒散，但你有自己的节奏和智慧。你的平和与淡定是现代社会稀缺的品质。",
+                tags: ["平和", "悠闲", "淡定", "享受", "可爱"],
+                traits: [
+                    { icon: "💪", title: "核心优势", value: "心态平和、不急不躁、享受生活、减压能力强、与世无争" },
+                    { icon: "🎯", title: "适合场景", value: "稳定工作、生活方式相关、治愈系领域、低压力环境" },
+                    { icon: "⚠️", title: "成长建议", value: "提高积极性、增强竞争意识、适当走出舒适区、设定目标" }
+                ]
+            }
+        };
+        
+        let currentQuestion = 0;
+        let animalScores = {
+            lion: 0, owl: 0, dolphin: 0, fox: 0, bee: 0,
+            wolf: 0, cheetah: 0, cat: 0, butterfly: 0, panda: 0
+        };
+        
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">问题 ${currentQuestion + 1}/10</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <div class="option-label">${option.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('nextBtn').disabled = true;
+        }
+        
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.option')[index].classList.add('selected');
+            
+            const option = questions[currentQuestion].options[index];
+            animalScores[option.animal] += option.score;
+            
+            document.getElementById('nextBtn').disabled = false;
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        function calculateAnimal() {
+            let maxScore = 0;
+            let resultAnimal = 'lion';
+            
+            for (let animal in animalScores) {
+                if (animalScores[animal] > maxScore) {
+                    maxScore = animalScores[animal];
+                    resultAnimal = animal;
+                }
+            }
+            
+            return resultAnimal;
+        }
+        
+        function showResult() {
+            const animal = calculateAnimal();
+            const result = animalResults[animal];
+            
+            document.getElementById('quiz').classList.add('hidden');
+            document.getElementById('result').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            document.getElementById('resultType').textContent = result.name;
+            document.getElementById('resultSubtitle').textContent = result.subtitle;
+            document.getElementById('resultDesc').textContent = result.desc;
+            
+            const tagsHtml = result.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            document.getElementById('resultTags').innerHTML = tagsHtml;
+            
+            const traitsHtml = result.traits.map(trait => `
+                <div class="trait-item">
+                    <div class="trait-title">
+                        <span>${trait.icon}</span>
+                        <span>${trait.title}</span>
+                    </div>
+                    <div class="trait-value">${trait.value}</div>
+                </div>
+            `).join('');
+            document.getElementById('traits').innerHTML = traitsHtml;
+        }
+        
+        function shareResult() {
+            const animal = calculateAnimal();
+            const result = animalResults[animal];
+            const text = `我的动物属性是${result.name}！${result.subtitle}，你也来测测看吧~`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '动物属性测试',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                alert('分享内容：' + text);
+            }
+        }
+        
+        function restart() {
+            currentQuestion = 0;
+            animalScores = {
+                lion: 0, owl: 0, dolphin: 0, fox: 0, bee: 0,
+                wolf: 0, cheetah: 0, cat: 0, butterfly: 0, panda: 0
+            };
+            document.getElementById('quiz').classList.remove('hidden');
+            document.getElementById('result').classList.remove('active');
+            renderQuestion();
+        }
+        
+        renderQuestion();
+    </script>
+</body>
+</html>

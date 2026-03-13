@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你的审美风格 | 趣味测试</title>
+    <style>
+        :root {
+            --color-primary: #000;
+            --color-text: #111;
+            --color-accent: #4ade80;
+            --color-bg: #000;
+            --color-card: #111;
+            --color-border: #222;
+            --color-white: #fff;
+            --color-gray-light: #666;
+            
+            --font-size-h2: 24px;
+            --font-size-card-title: 15px;
+            --font-size-small: 12px;
+            --font-weight-bold: 600;
+            
+            --max-width-mobile: 420px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --radius-md: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--color-bg);
+            color: var(--color-white);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: var(--spacing-lg);
+        }
+        
+        .container {
+            max-width: var(--max-width-mobile);
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: slideUp 0.6s ease;
+        }
+        
+        .header h1 {
+            font-size: var(--font-size-h2);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+        }
+        
+        .header p {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+        }
+        
+        .progress-bar {
+            background: var(--color-card);
+            height: 4px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            animation: slideUp 0.6s ease 0.1s backwards;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--color-accent);
+            transition: width 0.3s ease;
+        }
+        
+        .question-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            animation: slideUp 0.6s ease 0.2s backwards;
+        }
+        
+        .question-number {
+            color: var(--color-accent);
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+        }
+        
+        .question-text {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-white);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .option {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        
+        .option:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            border-color: var(--color-accent);
+            background: rgba(74, 222, 128, 0.1);
+        }
+        
+        .option-label {
+            font-size: var(--font-size-card-title);
+            font-weight: 500;
+            color: var(--color-white);
+        }
+        
+        .button {
+            width: 100%;
+            background: var(--color-white);
+            color: var(--color-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 14px 24px;
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .button:hover {
+            background: #f5f5f5;
+            transform: translateY(-1px);
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            display: none;
+        }
+        
+        .result.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .result-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+        
+        .result-emoji {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+        
+        .result-type {
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-accent);
+        }
+        
+        .result-subtitle {
+            font-size: var(--font-size-card-title);
+            color: var(--color-white);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .result-desc {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--color-white);
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        
+        .tag {
+            background: #1a1a1a;
+            color: var(--color-accent);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+        }
+        
+        .traits {
+            display: grid;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .trait-item {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+        
+        .trait-title {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .trait-value {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+            line-height: 1.6;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .share-button {
+            flex: 1;
+            background: var(--color-card);
+            color: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .share-button:hover {
+            background: #1a1a1a;
+            border-color: #333;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quiz" class="quiz">
+            <div class="header">
+                <h1>测测你的审美风格</h1>
+                <p>10道题发现你的艺术品味</p>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div id="questionContainer"></div>
+            
+            <button class="button" id="nextBtn" onclick="nextQuestion()" disabled>
+                下一题
+            </button>
+        </div>
+        
+        <div id="result" class="result">
+            <div class="header">
+                <h1>你的审美风格</h1>
+                <p>基于艺术品味分析</p>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-emoji" id="resultEmoji"></div>
+                <div class="result-type" id="resultType"></div>
+                <div class="result-subtitle" id="resultSubtitle"></div>
+                <div class="result-desc" id="resultDesc"></div>
+                <div class="result-tags" id="resultTags"></div>
+            </div>
+            
+            <div class="traits" id="traits"></div>
+            
+            <div class="share-buttons">
+                <button class="share-button" onclick="shareResult()">
+                    📤 分享结果
+                </button>
+                <button class="share-button" onclick="restart()">
+                    🔄 重新测试
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            {
+                question: "你更喜欢的色彩是？",
+                options: [
+                    { text: "黑白灰，极简干净", style: "minimalist", score: 3 },
+                    { text: "马卡龙色，温柔治愈", style: "pastel", score: 3 },
+                    { text: "高饱和色，大胆鲜艳", style: "bold", score: 3 },
+                    { text: "大地色，自然温暖", style: "natural", score: 3 }
+                ]
+            },
+            {
+                question: "理想的居住空间是？",
+                options: [
+                    { text: "极简风，留白克制", style: "minimalist", score: 3 },
+                    { text: "森系风，温馨自然", style: "natural", score: 3 },
+                    { text: "复古风，怀旧文艺", style: "vintage", score: 3 },
+                    { text: "工业风，硬朗酷炫", style: "industrial", score: 3 }
+                ]
+            },
+            {
+                question: "选择服装时，你更倾向？",
+                options: [
+                    { text: "简约基础款，百搭经典", style: "minimalist", score: 2 },
+                    { text: "复古单品，独特有味道", style: "vintage", score: 2 },
+                    { text: "设计感强，个性鲜明", style: "bold", score: 2 },
+                    { text: "舒适自然，柔和亲切", style: "natural", score: 2 }
+                ]
+            },
+            {
+                question: "你的手机桌面是？",
+                options: [
+                    { text: "干净整洁，app很少", style: "minimalist", score: 2 },
+                    { text: "温柔壁纸，精心布置", style: "pastel", score: 2 },
+                    { text: "个性壁纸，独特风格", style: "bold", score: 2 },
+                    { text: "随意摆放，实用为主", style: "natural", score: 1 }
+                ]
+            },
+            {
+                question: "喜欢的艺术风格是？",
+                options: [
+                    { text: "现代主义，几何抽象", style: "modern", score: 3 },
+                    { text: "印象派，梦幻唯美", style: "romantic", score: 3 },
+                    { text: "波普艺术，大胆夸张", style: "bold", score: 3 },
+                    { text: "自然主义，写实细腻", style: "natural", score: 3 }
+                ]
+            },
+            {
+                question: "装饰品选择上，你更喜欢？",
+                options: [
+                    { text: "少而精，每件都有意义", style: "minimalist", score: 3 },
+                    { text: "温馨小物，营造氛围", style: "pastel", score: 2 },
+                    { text: "大胆艺术品，吸睛独特", style: "bold", score: 2 },
+                    { text: "手工制品，自然质朴", style: "natural", score: 2 }
+                ]
+            },
+            {
+                question: "你的审美态度是？",
+                options: [
+                    { text: "少即是多，克制简约", style: "minimalist", score: 3 },
+                    { text: "温柔治愈，舒适为主", style: "pastel", score: 3 },
+                    { text: "大胆前卫，不走寻常路", style: "bold", score: 3 },
+                    { text: "回归本质，自然朴实", style: "natural", score: 3 }
+                ]
+            },
+            {
+                question: "拍照时，你更喜欢？",
+                options: [
+                    { text: "极简构图，留白美学", style: "minimalist", score: 2 },
+                    { text: "柔光滤镜，温柔氛围", style: "pastel", score: 2 },
+                    { text: "强烈对比，视觉冲击", style: "bold", score: 2 },
+                    { text: "原片直出，真实自然", style: "natural", score: 2 }
+                ]
+            },
+            {
+                question: "你更欣赏的设计是？",
+                options: [
+                    { text: "无印良品风，简约实用", style: "minimalist", score: 3 },
+                    { text: "北欧风，温馨舒适", style: "scandinavian", score: 3 },
+                    { text: "工业风，粗犷硬朗", style: "industrial", score: 3 },
+                    { text: "复古风，怀旧文艺", style: "vintage", score: 3 }
+                ]
+            },
+            {
+                question: "选择咖啡店时，你更喜欢？",
+                options: [
+                    { text: "极简风，干净克制", style: "minimalist", score: 2 },
+                    { text: "温馨小店，治愈系", style: "pastel", score: 2 },
+                    { text: "工业风，个性酷炫", style: "industrial", score: 2 },
+                    { text: "复古咖啡馆，文艺范", style: "vintage", score: 2 }
+                ]
+            }
+        ];
+        
+        const aestheticResults = {
+            minimalist: {
+                emoji: "⚪",
+                name: "极简主义",
+                subtitle: "Less is More 的信仰者",
+                desc: "你是极简主义美学的追随者，相信'少即是多'的哲学。你的审美克制、纯粹、优雅，喜欢干净的线条和留白的空间。黑白灰是你的最爱，你追求本质和功能性。你的生活空间整洁有序，每件物品都有其存在的意义。你的审美高级而不张扬，简约但不简单。",
+                tags: ["极简", "克制", "留白", "纯粹", "高级感"],
+                traits: [
+                    { icon: "🎨", title: "审美关键词", value: "黑白灰、几何线条、留白、功能性、去繁就简" },
+                    { icon: "🏠", title: "推荐风格", value: "无印良品、包豪斯、现代主义、日式侘寂、Normcore" },
+                    { icon: "💡", title: "品味提升", value: "学习包豪斯设计、关注Kinfolk杂志、探索日本美学、断舍离生活" }
+                ]
+            },
+            pastel: {
+                emoji: "🌸",
+                name: "温柔治愈系",
+                subtitle: "马卡龙色的梦想家",
+                desc: "你是温柔治愈系的审美倾向者，喜欢柔和的马卡龙色系和温馨的氛围。你的审美温暖、舒适、充满少女心，追求美好和治愈的感觉。粉色、薰衣草色、奶油色是你的最爱。你喜欢营造温馨的空间，用小物件装点生活。你的审美让人感到放松和幸福。",
+                tags: ["温柔", "治愈", "马卡龙", "少女心", "温馨"],
+                traits: [
+                    { icon: "🎨", title: "审美关键词", value: "马卡龙色、柔光、温馨、小物件、氛围感" },
+                    { icon: "🏠", title: "推荐风格", value: "法式浪漫、田园风、Cottagecore、韩系ins风" },
+                    { icon: "💡", title: "品味提升", value: "关注ins博主、学习软装搭配、探索花艺、氛围感摄影" }
+                ]
+            },
+            bold: {
+                emoji: "🎨",
+                name: "大胆前卫派",
+                subtitle: "色彩和设计的冒险家",
+                desc: "你是大胆前卫的审美探索者，不怕打破常规和尝试新鲜事物。你的审美充满个性、鲜明、有态度，喜欢高饱和度的色彩和强烈的视觉冲击。你追求独特和与众不同，不在意别人的眼光。你的审美大胆而有趣，充满创造力和想象力。",
+                tags: ["大胆", "个性", "鲜艳", "前卫", "创意"],
+                traits: [
+                    { icon: "🎨", title: "审美关键词", value: "高饱和色、强对比、几何图案、混搭、实验性" },
+                    { icon: "🏠", title: "推荐风格", value: "波普艺术、孟菲斯风、极繁主义、Y2K风格" },
+                    { icon: "💡", title: "品味提升", value: "关注当代艺术、探索设计展、学习配色理论、培养审美胆量" }
+                ]
+            },
+            natural: {
+                emoji: "🌿",
+                name: "自然朴实派",
+                subtitle: "大地色的守护者",
+                desc: "你是自然朴实的审美倾向者，喜欢回归本质和大自然的感觉。你的审美温暖、舒适、接地气，追求真实和自然。大地色系、木质、棉麻是你的最爱。你不追求潮流，更看重质感和舒适度。你的审美让人感到踏实和温暖，有家的感觉。",
+                tags: ["自然", "朴实", "大地色", "温暖", "舒适"],
+                traits: [
+                    { icon: "🎨", title: "审美关键词", value: "大地色、木质、棉麻、手工、原生态" },
+                    { icon: "🏠", title: "推荐风格", value: "Wabi-Sabi、北欧风、日式、Hygge、环保风" },
+                    { icon: "💡", title: "品味提升", value: "学习材质搭配、关注可持续设计、探索手工艺、亲近自然" }
+                ]
+            },
+            vintage: {
+                emoji: "📻",
+                name: "复古怀旧派",
+                subtitle: "时光的收藏者",
+                desc: "你是复古怀旧的审美爱好者，喜欢有故事和年代感的事物。你的审美文艺、独特、充满情怀，追求经典和永恒。你欣赏老物件的质感和韵味，喜欢vintage单品。你不追求新潮，更看重底蕴和文化。你的审美有深度和品味，让人回味无穷。",
+                tags: ["复古", "怀旧", "文艺", "经典", "情怀"],
+                traits: [
+                    { icon: "🎨", title: "审美关键词", value: "年代感、老物件、经典款、做旧、故事感" },
+                    { icon: "🏠", title: "推荐风格", value: "美式复古、法式古典、工业复古、Old Money" },
+                    { icon: "💡", title: "品味提升", value: "逛古着店、学习时尚史、收藏经典设计、研究历史文化" }
+                ]
+            },
+            industrial: {
+                emoji: "⚙️",
+                name: "工业硬朗派",
+                subtitle: "金属和混凝土的爱好者",
+                desc: "你是工业风格的拥趸，喜欢粗犷硬朗的质感和未完成的美学。你的审美酷炫、有力量感、不拘一格，追求原始和真实。裸露的砖墙、水泥、金属是你的最爱。你欣赏功能性和结构美，不喜欢过度装饰。你的审美个性而有态度，充满都市感和力量感。",
+                tags: ["工业", "硬朗", "粗犷", "酷炫", "力量"],
+                traits: [
+                    { icon: "🎨", title: "审美关键词", value: "水泥、金属、砖墙、管道、未完成美学" },
+                    { icon: "🏠", title: "推荐风格", value: "Loft、工业风、粗野主义、机能风" },
+                    { icon: "💡", title: "品味提升", value: "参观工业遗址、学习建筑设计、探索街头文化、研究材料美学" }
+                ]
+            },
+            scandinavian: {
+                emoji: "🕯️",
+                name: "北欧温馨派",
+                subtitle: "Hygge生活的践行者",
+                desc: "你是北欧审美的追随者，追求简约、温馨和功能性的完美平衡。你的审美舒适、温暖、人性化，重视生活质量和幸福感。浅木色、白色、温暖的灯光是你的最爱。你追求Hygge的生活方式，相信设计为人服务。你的审美让人感到放松和愉悦，充满生活智慧。",
+                tags: ["北欧", "温馨", "简约", "舒适", "Hygge"],
+                traits: [
+                    { icon: "🎨", title: "审美关键词", value: "浅木色、白色、蜡烛、羊毛、温暖光线" },
+                    { icon: "🏠", title: "推荐风格", value: "北欧风、丹麦设计、瑞典简约、Lagom" },
+                    { icon: "💡", title: "品味提升", value: "学习北欧设计、体验Hygge生活、研究人性化设计、追求生活质量" }
+                ]
+            },
+            modern: {
+                emoji: "🔷",
+                name: "现代主义",
+                subtitle: "形式追随功能的信徒",
+                desc: "你是现代主义设计的拥护者，相信形式追随功能的设计哲学。你的审美理性、简洁、富有逻辑，追求纯粹的美和功能性。你欣赏几何形态和抽象艺术，喜欢干净的线条和清晰的结构。你的审美经典而永恒，不受流行趋势影响。",
+                tags: ["现代", "理性", "几何", "功能", "经典"],
+                traits: [
+                    { icon: "🎨", title: "审美关键词", value: "几何、抽象、功能性、理性、纯粹形式" },
+                    { icon: "🏠", title: "推荐风格", value: "包豪斯、德国设计、瑞士设计、国际主义风格" },
+                    { icon: "💡", title: "品味提升", value: "学习设计史、研究包豪斯、欣赏现代艺术、理解设计哲学" }
+                ]
+            }
+        };
+        
+        let currentQuestion = 0;
+        let styleScores = {
+            minimalist: 0, pastel: 0, bold: 0, natural: 0,
+            vintage: 0, industrial: 0, scandinavian: 0, modern: 0, romantic: 0
+        };
+        
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">问题 ${currentQuestion + 1}/10</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <div class="option-label">${option.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('nextBtn').disabled = true;
+        }
+        
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.option')[index].classList.add('selected');
+            
+            const option = questions[currentQuestion].options[index];
+            styleScores[option.style] += option.score;
+            
+            document.getElementById('nextBtn').disabled = false;
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        function calculateStyle() {
+            let maxScore = 0;
+            let resultStyle = 'minimalist';
+            
+            for (let style in styleScores) {
+                if (styleScores[style] > maxScore) {
+                    maxScore = styleScores[style];
+                    resultStyle = style;
+                }
+            }
+            
+            // 如果不是主要8种类型，映射到主要类型
+            const mainStyles = ['minimalist', 'pastel', 'bold', 'natural', 'vintage', 'industrial', 'scandinavian', 'modern'];
+            if (!mainStyles.includes(resultStyle)) {
+                resultStyle = 'minimalist';
+            }
+            
+            return resultStyle;
+        }
+        
+        function showResult() {
+            const style = calculateStyle();
+            const result = aestheticResults[style];
+            
+            document.getElementById('quiz').classList.add('hidden');
+            document.getElementById('result').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            document.getElementById('resultType').textContent = result.name;
+            document.getElementById('resultSubtitle').textContent = result.subtitle;
+            document.getElementById('resultDesc').textContent = result.desc;
+            
+            const tagsHtml = result.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            document.getElementById('resultTags').innerHTML = tagsHtml;
+            
+            const traitsHtml = result.traits.map(trait => `
+                <div class="trait-item">
+                    <div class="trait-title">
+                        <span>${trait.icon}</span>
+                        <span>${trait.title}</span>
+                    </div>
+                    <div class="trait-value">${trait.value}</div>
+                </div>
+            `).join('');
+            document.getElementById('traits').innerHTML = traitsHtml;
+        }
+        
+        function shareResult() {
+            const style = calculateStyle();
+            const result = aestheticResults[style];
+            const text = `我的审美风格是${result.name}！${result.subtitle}，你也来测测看吧~`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '审美风格测试',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                alert('分享内容：' + text);
+            }
+        }
+        
+        function restart() {
+            currentQuestion = 0;
+            styleScores = {
+                minimalist: 0, pastel: 0, bold: 0, natural: 0,
+                vintage: 0, industrial: 0, scandinavian: 0, modern: 0, romantic: 0
+            };
+            document.getElementById('quiz').classList.remove('hidden');
+            document.getElementById('result').classList.remove('active');
+            renderQuestion();
+        }
+        
+        renderQuestion();
+    </script>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你的学习风格 | 趣味测试</title>
+    <style>
+        :root {
+            --color-primary: #000;
+            --color-text: #111;
+            --color-accent: #4ade80;
+            --color-bg: #000;
+            --color-card: #111;
+            --color-border: #222;
+            --color-white: #fff;
+            --color-gray-light: #666;
+            
+            --font-size-h2: 24px;
+            --font-size-card-title: 15px;
+            --font-size-small: 12px;
+            --font-weight-bold: 600;
+            
+            --max-width-mobile: 420px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --radius-md: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--color-bg);
+            color: var(--color-white);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: var(--spacing-lg);
+        }
+        
+        .container {
+            max-width: var(--max-width-mobile);
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: slideUp 0.6s ease;
+        }
+        
+        .header h1 {
+            font-size: var(--font-size-h2);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+        }
+        
+        .header p {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+        }
+        
+        .progress-bar {
+            background: var(--color-card);
+            height: 4px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            animation: slideUp 0.6s ease 0.1s backwards;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--color-accent);
+            transition: width 0.3s ease;
+        }
+        
+        .question-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            animation: slideUp 0.6s ease 0.2s backwards;
+        }
+        
+        .question-number {
+            color: var(--color-accent);
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+        }
+        
+        .question-text {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-white);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .option {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        
+        .option:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            border-color: var(--color-accent);
+            background: rgba(74, 222, 128, 0.1);
+        }
+        
+        .option-label {
+            font-size: var(--font-size-card-title);
+            font-weight: 500;
+            color: var(--color-white);
+        }
+        
+        .button {
+            width: 100%;
+            background: var(--color-white);
+            color: var(--color-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 14px 24px;
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .button:hover {
+            background: #f5f5f5;
+            transform: translateY(-1px);
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            display: none;
+        }
+        
+        .result.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .result-card {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+        
+        .result-emoji {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+        
+        .result-type {
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-accent);
+        }
+        
+        .result-subtitle {
+            font-size: var(--font-size-card-title);
+            color: var(--color-white);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        
+        .result-desc {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--color-white);
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        
+        .tag {
+            background: #1a1a1a;
+            color: var(--color-accent);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+        }
+        
+        .traits {
+            display: grid;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .trait-item {
+            background: var(--color-card);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+        
+        .trait-title {
+            font-size: var(--font-size-card-title);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 8px;
+            color: var(--color-white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .trait-value {
+            font-size: var(--font-size-small);
+            color: var(--color-gray-light);
+            line-height: 1.6;
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .share-button {
+            flex: 1;
+            background: var(--color-card);
+            color: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .share-button:hover {
+            background: #1a1a1a;
+            border-color: #333;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quiz" class="quiz">
+            <div class="header">
+                <h1>测测你的学习风格</h1>
+                <p>10道题找到最适合你的学习方式</p>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div id="questionContainer"></div>
+            
+            <button class="button" id="nextBtn" onclick="nextQuestion()" disabled>
+                下一题
+            </button>
+        </div>
+        
+        <div id="result" class="result">
+            <div class="header">
+                <h1>你的学习风格</h1>
+                <p>基于认知模式分析</p>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-emoji" id="resultEmoji"></div>
+                <div class="result-type" id="resultType"></div>
+                <div class="result-subtitle" id="resultSubtitle"></div>
+                <div class="result-desc" id="resultDesc"></div>
+                <div class="result-tags" id="resultTags"></div>
+            </div>
+            
+            <div class="traits" id="traits"></div>
+            
+            <div class="share-buttons">
+                <button class="share-button" onclick="shareResult()">
+                    📤 分享结果
+                </button>
+                <button class="share-button" onclick="restart()">
+                    🔄 重新测试
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            {
+                question: "学习新知识时，你更喜欢？",
+                options: [
+                    { text: "看图表、视频等视觉材料", style: "visual", score: 3 },
+                    { text: "听讲座、播客等音频内容", style: "auditory", score: 3 },
+                    { text: "动手实践、做实验", style: "kinesthetic", score: 3 },
+                    { text: "阅读文字、做笔记", style: "reading", score: 3 }
+                ]
+            },
+            {
+                question: "记忆知识点时，你倾向于？",
+                options: [
+                    { text: "画思维导图、图表", style: "visual", score: 2 },
+                    { text: "反复念叨、自己讲解", style: "auditory", score: 2 },
+                    { text: "反复练习、做题", style: "kinesthetic", score: 2 },
+                    { text: "整理笔记、反复阅读", style: "reading", score: 2 }
+                ]
+            },
+            {
+                question: "你的学习环境偏好？",
+                options: [
+                    { text: "安静独处，高度专注", style: "solitary", score: 3 },
+                    { text: "小组讨论，互相启发", style: "social", score: 3 },
+                    { text: "看情况，都可以", style: "flexible", score: 2 }
+                ]
+            },
+            {
+                question: "遇到难题时，你会？",
+                options: [
+                    { text: "自己思考，查资料研究", style: "solitary", score: 2 },
+                    { text: "找人讨论，听取意见", style: "social", score: 2 },
+                    { text: "先自己想，不行再问人", style: "flexible", score: 2 }
+                ]
+            },
+            {
+                question: "你的学习节奏是？",
+                options: [
+                    { text: "集中时间深度学习", style: "deep", score: 3 },
+                    { text: "分散时间多次复习", style: "spaced", score: 3 },
+                    { text: "临时抱佛脚突击", style: "cram", score: 2 }
+                ]
+            },
+            {
+                question: "学习新技能时，你偏好？",
+                options: [
+                    { text: "先理解原理和逻辑", style: "logical", score: 3 },
+                    { text: "直接上手边做边学", style: "kinesthetic", score: 3 },
+                    { text: "先看示例再模仿", style: "visual", score: 2 }
+                ]
+            },
+            {
+                question: "你更擅长理解？",
+                options: [
+                    { text: "逻辑推理和系统思维", style: "logical", score: 3 },
+                    { text: "语言文字和表达", style: "linguistic", score: 3 },
+                    { text: "图形空间和视觉", style: "visual", score: 2 },
+                    { text: "实际操作和动手", style: "kinesthetic", score: 2 }
+                ]
+            },
+            {
+                question: "学习时，你需要？",
+                options: [
+                    { text: "绝对安静，不能有任何声音", style: "focused", score: 2 },
+                    { text: "背景音乐或白噪音", style: "flexible", score: 2 },
+                    { text: "无所谓，环境影响不大", style: "adaptable", score: 2 }
+                ]
+            },
+            {
+                question: "你的记笔记方式？",
+                options: [
+                    { text: "详细记录，几乎逐字", style: "reading", score: 3 },
+                    { text: "关键词和框架", style: "logical", score: 3 },
+                    { text: "图表和思维导图", style: "visual", score: 3 },
+                    { text: "很少记，靠大脑记忆", style: "auditory", score: 2 }
+                ]
+            },
+            {
+                question: "准备考试时，你会？",
+                options: [
+                    { text: "系统复习，全面覆盖", style: "systematic", score: 3 },
+                    { text: "重点突破，抓大放小", style: "strategic", score: 3 },
+                    { text: "刷题为主，实战演练", style: "kinesthetic", score: 2 },
+                    { text: "看心情和状态", style: "flexible", score: 1 }
+                ]
+            }
+        ];
+        
+        const learningResults = {
+            visual: {
+                emoji: "👀",
+                name: "视觉学习型",
+                subtitle: "图像和视觉的记忆高手",
+                desc: "你是视觉型学习者，通过看和观察来学习效果最好。你善于记住图表、图片、颜色和空间位置。思维导图、流程图、视频都是你的最爱。建议多用图表整理知识，用颜色标记重点，观看优质视频教程。你的视觉记忆力很强，适合设计、艺术等领域。",
+                tags: ["视觉记忆", "图表", "思维导图", "观察力强", "空间感"],
+                traits: [
+                    { icon: "📚", title: "学习方法", value: "使用思维导图、流程图、彩色笔记、观看视频教程、图片记忆法" },
+                    { icon: "🎯", title: "适合学科", value: "几何、设计、地理、美术、建筑、数据可视化" },
+                    { icon: "💡", title: "提升建议", value: "多画图整理知识、用颜色分类、看可视化资料、培养空间想象力" }
+                ]
+            },
+            auditory: {
+                emoji: "👂",
+                name: "听觉学习型",
+                subtitle: "声音和语言的吸收专家",
+                desc: "你是听觉型学习者，通过听和说来学习效果最好。你善于记住声音、节奏和语言。听讲座、播客、音频书都很适合你。建议多听课、参与讨论、自己讲解给别人听。你可能喜欢边听音乐边学习，记忆力通过声音强化。适合语言、音乐等领域。",
+                tags: ["听觉记忆", "语言", "讨论", "表达力强", "节奏感"],
+                traits: [
+                    { icon: "📚", title: "学习方法", value: "听讲座、参与讨论、自己讲解、录音复习、音频学习" },
+                    { icon: "🎯", title: "适合学科", value: "语言学习、音乐、演讲、法律、历史、文学" },
+                    { icon: "💡", title: "提升建议", value: "多参与讨论、给别人讲解、录音记忆、听播客课程" }
+                ]
+            },
+            kinesthetic: {
+                emoji: "✋",
+                name: "动觉学习型",
+                subtitle: "实践和动手的行动派",
+                desc: "你是动觉型学习者，通过做和实践来学习效果最好。你需要动手操作、亲身体验才能真正理解。死记硬背对你不太有效，实验、练习、模拟才是你的强项。建议多做实验、多练习、多实践。你可能坐不住，需要边动边学。适合工程、体育、手工等领域。",
+                tags: ["动手实践", "体验", "行动力", "技能型", "坐不住"],
+                traits: [
+                    { icon: "📚", title: "学习方法", value: "动手实验、实际操作、角色扮演、项目制学习、边走边学" },
+                    { icon: "🎯", title: "适合学科", value: "工程、体育、医学、编程、手工艺、烹饪" },
+                    { icon: "💡", title: "提升建议", value: "多做项目、实地考察、实验室学习、边学边练" }
+                ]
+            },
+            reading: {
+                emoji: "📖",
+                name: "阅读写作型",
+                subtitle: "文字和笔记的整理大师",
+                desc: "你是阅读写作型学习者，通过读和写来学习效果最好。你喜欢阅读教材、做详细笔记、整理资料。文字是你最好的朋友，你能从书本中获取大量知识。建议多阅读、多做笔记、多写总结。你可能有自己的笔记系统，记忆通过文字强化。适合文科、研究等领域。",
+                tags: ["阅读", "笔记", "文字", "整理", "逻辑"],
+                traits: [
+                    { icon: "📚", title: "学习方法", value: "阅读教材、做详细笔记、整理资料、写总结、查词典" },
+                    { icon: "🎯", title: "适合学科", value: "文学、历史、哲学、法律、研究、写作" },
+                    { icon: "💡", title: "提升建议", value: "建立笔记系统、多阅读经典、写学习总结、整理知识库" }
+                ]
+            },
+            logical: {
+                emoji: "🧮",
+                name: "逻辑推理型",
+                subtitle: "系统和原理的思考者",
+                desc: "你是逻辑推理型学习者，通过理解原理和逻辑来学习效果最好。你需要知道'为什么'才能真正掌握。死记硬背对你很困难，但理解了原理就能融会贯通。建议多思考背后的逻辑、建立知识体系、寻找规律。你善于数学和科学，适合理工科领域。",
+                tags: ["逻辑", "原理", "系统思维", "推理", "理性"],
+                traits: [
+                    { icon: "📚", title: "学习方法", value: "理解原理、建立框架、逻辑推导、寻找规律、系统学习" },
+                    { icon: "🎯", title: "适合学科", value: "数学、物理、编程、工程、经济学、逻辑学" },
+                    { icon: "💡", title: "提升建议", value: "多思考原理、建立知识树、做逻辑推理题、学习框架思维" }
+                ]
+            },
+            social: {
+                emoji: "👥",
+                name: "社交协作型",
+                subtitle: "讨论和互动的学习者",
+                desc: "你是社交协作型学习者，在小组讨论和互动中学习效果最好。你喜欢和别人一起学习、讨论问题、互相启发。独自学习会让你感到孤单和低效。建议多参加学习小组、找学习伙伴、参与讨论。你善于从他人的观点中获得启发，团队学习是你的优势。",
+                tags: ["讨论", "协作", "互动", "社交", "团队"],
+                traits: [
+                    { icon: "📚", title: "学习方法", value: "小组学习、课堂讨论、教学相长、头脑风暴、互助学习" },
+                    { icon: "🎯", title: "适合学科", value: "商科、社会学、教育、心理学、团队项目" },
+                    { icon: "💡", title: "提升建议", value: "组建学习小组、多参与讨论、给别人讲解、参加学习社群" }
+                ]
+            }
+        };
+        
+        let currentQuestion = 0;
+        let styleScores = {
+            visual: 0, auditory: 0, kinesthetic: 0, reading: 0,
+            logical: 0, social: 0, solitary: 0, flexible: 0
+        };
+        
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">问题 ${currentQuestion + 1}/10</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <div class="option-label">${option.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('nextBtn').disabled = true;
+        }
+        
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.option')[index].classList.add('selected');
+            
+            const option = questions[currentQuestion].options[index];
+            styleScores[option.style] += option.score;
+            
+            document.getElementById('nextBtn').disabled = false;
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        function calculateStyle() {
+            let maxScore = 0;
+            let resultStyle = 'visual';
+            
+            for (let style in styleScores) {
+                if (styleScores[style] > maxScore) {
+                    maxScore = styleScores[style];
+                    resultStyle = style;
+                }
+            }
+            
+            // 如果不是主要6种类型，映射到主要类型
+            const mainStyles = ['visual', 'auditory', 'kinesthetic', 'reading', 'logical', 'social'];
+            if (!mainStyles.includes(resultStyle)) {
+                // 根据次高分决定
+                let secondMax = 0;
+                let secondStyle = 'visual';
+                for (let style of mainStyles) {
+                    if (styleScores[style] > secondMax) {
+                        secondMax = styleScores[style];
+                        secondStyle = style;
+                    }
+                }
+                resultStyle = secondStyle;
+            }
+            
+            return resultStyle;
+        }
+        
+        function showResult() {
+            const style = calculateStyle();
+            const result = learningResults[style];
+            
+            document.getElementById('quiz').classList.add('hidden');
+            document.getElementById('result').classList.add('active');
+            
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            document.getElementById('resultType').textContent = result.name;
+            document.getElementById('resultSubtitle').textContent = result.subtitle;
+            document.getElementById('resultDesc').textContent = result.desc;
+            
+            const tagsHtml = result.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            document.getElementById('resultTags').innerHTML = tagsHtml;
+            
+            const traitsHtml = result.traits.map(trait => `
+                <div class="trait-item">
+                    <div class="trait-title">
+                        <span>${trait.icon}</span>
+                        <span>${trait.title}</span>
+                    </div>
+                    <div class="trait-value">${trait.value}</div>
+                </div>
+            `).join('');
+            document.getElementById('traits').innerHTML = traitsHtml;
+        }
+        
+        function shareResult() {
+            const style = calculateStyle();
+            const result = learningResults[style];
+            const text = `我的学习风格是${result.name}！${result.subtitle}，你也来测测看吧~`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '学习风格测试',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                alert('分享内容：' + text);
+            }
+        }
+        
+        function restart() {
+            currentQuestion = 0;
+            styleScores = {
+                visual: 0, auditory: 0, kinesthetic: 0, reading: 0,
+                logical: 0, social: 0, solitary: 0, flexible: 0
+            };
+            document.getElementById('quiz').classList.remove('hidden');
+            document.getElementById('result').classList.remove('active');
+            renderQuestion();
+        }
+        
+        renderQuestion();
+    </script>
+</body>
+</html>
